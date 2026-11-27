@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#090d18">
+    <meta name="description" content="IRIS AI turns your webcam into a private, interactive visual intelligence dashboard.">
+    <title>IRIS AI — Visual intelligence, in real time</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="/app.js"></script>
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+    <main class="auth-layout" id="authView" hidden>
+      <section class="auth-story">
+        <a class="brand" href="/" aria-label="IRIS AI home"><span class="brand-mark">◉</span><span>IRIS<span class="brand-ai">.AI</span></span></a>
+        <div class="story-copy">
+          <div class="eyebrow"><span class="live-dot"></span> YOUR PERSONAL VISION STUDIO</div>
+          <h1>See the world<br>in a <span>new light.</span></h1>
+          <p>Gesture recognition, motion insights and object detection — all in one beautifully simple workspace.</p>
+        </div>
+        <div class="story-foot"><span class="privacy-icon">◈</span> Your camera stays on your device. Always.</div>
+      </section>
+      <section class="auth-side">
+        <div class="auth-card">
+          <div class="mobile-brand brand"><span class="brand-mark">◉</span><span>IRIS<span class="brand-ai">.AI</span></span></div>
+          <div class="eyebrow">WELCOME TO IRIS</div>
+          <h2 id="authHeading">Your vision, amplified.</h2>
+          <p class="auth-subtitle" id="authSubtitle">Sign in to open your private workspace.</p>
+          <form id="authForm">
+            <label for="email">Email address</label>
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" minlength="8" placeholder="At least 8 characters" required>
+            <button class="button button-primary auth-submit" id="authSubmit" type="submit">Sign in <span>→</span></button>
+          </form>
+          <p class="auth-switch"><span id="authSwitchText">New to IRIS?</span> <button class="text-button" id="authSwitch" type="button">Create an account</button></p>
+          <div class="notice" id="authNotice" role="status" aria-live="polite"></div>
+          <p class="terms-note">By continuing, you agree to use the camera responsibly. No video is uploaded or stored.</p>
+        </div>
+        <div class="auth-footer">PRIVATE BY DESIGN <span>·</span> BUILT FOR THE CURIOUS</div>
+      </section>
+    </main>
+
+    <main class="app-layout" id="appView" hidden>
+      <aside class="sidebar">
+        <a class="brand" href="/" aria-label="IRIS AI home"><span class="brand-mark">◉</span><span>IRIS<span class="brand-ai">.AI</span></span></a>
+        <div class="workspace-label">WORKSPACE</div>
+        <nav class="side-nav" aria-label="Workspace">
+          <a class="nav-item active" href="#overview"><span class="nav-icon">⌂</span> Overview</a>
+          <a class="nav-item" href="#activity"><span class="nav-icon">◷</span> Activity</a>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="privacy-card"><span class="privacy-icon">◈</span><div><strong>Private by design</strong><small>Video is processed locally</small></div></div>
+          <div class="user-row">
+            <div class="avatar" id="userAvatar">I</div>
+            <div class="user-meta"><strong id="userEmail">Signed in</strong><small>Personal workspace</small></div>
+            <button class="icon-button" id="signOut" type="button" aria-label="Sign out" title="Sign out">↗</button>
+          </div>
+        </div>
+      </aside>
+
+      <section class="main-content" id="overview">
+        <header class="topbar">
+          <div>
+            <div class="eyebrow">IRIS VISION STUDIO <span class="topbar-separator">/</span> OVERVIEW</div>
+            <h1>Your space to explore.</h1>
+          </div>
+          <div class="topbar-meta"><span class="date-chip" id="todayLabel"></span><span class="online-chip"><span class="live-dot"></span> READY WHEN YOU ARE</span></div>
+        </header>
+
+        <div class="welcome-row">
+          <div><h2>Good to see you<span class="accent">.</span></h2><p>Start your camera to bring your visual workspace to life.</p></div>
+          <div class="session-status" id="status"><span class="status-dot"></span> CAMERA OFF</div>
+        </div>
+
+        <div class="workspace-grid">
+          <section class="vision-panel panel">
+            <div class="panel-heading">
+              <div><div class="panel-kicker">LIVE FEED <span class="feed-pill">LOCAL</span></div><h3>Your vision canvas</h3></div>
+              <button class="icon-button subtle" type="button" id="clearTrails" title="Clear movement trails" aria-label="Clear movement trails">⌫</button>
+            </div>
+            <div class="camera-stage" id="cameraStage">
+              <video id="video" autoplay playsinline muted></video>
+              <canvas id="canvas"></canvas>
+              <div class="camera-placeholder" id="cameraPlaceholder">
+                <div class="camera-orbit"><span class="camera-glyph">◉</span></div>
+                <strong>Your camera, your canvas.</strong>
+                <span>Nothing is recorded or sent to a server.</span>
+              </div>
+              <div class="camera-corner corner-tl"></div><div class="camera-corner corner-tr"></div>
+              <div class="camera-corner corner-bl"></div><div class="camera-corner corner-br"></div>
+              <div class="camera-overlay-label"><span class="live-dot"></span> <span id="feedLabel">STANDBY</span></div>
+            </div>
+            <div class="vision-controls">
+              <button class="button button-primary" id="cameraButton" type="button"><span class="button-symbol">▶</span> Start camera</button>
+              <button class="button button-secondary" id="pauseButton" type="button" disabled>Ⅱ <span>Pause</span></button>
+              <button class="button button-secondary" id="objectsButton" type="button">✳ <span>Enable objects</span></button>
+              <button class="button button-secondary mute-button" id="muteButton" type="button">♫ <span>Voice on</span></button>
+            </div>
+            <div class="settings-row">
+              <label for="trailLength">Motion trails <input id="trailLength" type="range" min="5" max="60" value="28"><span id="trailValue">28</span></label>
+              <label for="speed">Voice speed <input id="speed" type="range" min="0.6" max="1.4" step="0.1" value="0.9"><span id="speedValue">0.9×</span></label>
+            </div>
+            <p class="camera-help" id="cameraHelp">Camera access is requested only when you press Start camera.</p>
+          </section>
+
+          <section class="insights-column" aria-label="Live insights">
+            <div class="section-label">LIVE INSIGHTS <span>UPDATES IN REAL TIME</span></div>
+            <article class="insight-card panel"><div class="insight-icon cyan-icon">✳</div><div><div class="insight-label">HANDS IN FRAME</div><strong id="handCount">—</strong><small id="handDetail">Start camera to detect hands</small></div><span class="insight-spark">⌁</span></article>
+            <article class="insight-card panel"><div class="insight-icon violet-icon">◇</div><div><div class="insight-label">GESTURE</div><strong class="insight-value" id="gesture">Waiting</strong><small id="gestureDetail">Your gestures appear here</small></div></article>
+            <article class="insight-card panel"><div class="insight-icon green-icon">↗</div><div><div class="insight-label">MOVEMENT</div><strong class="insight-value" id="movement">—</strong><small>Hand motion analysis</small></div></article>
+            <article class="insight-card panel"><div class="insight-icon amber-icon">▧</div><div><div class="insight-label">OBJECT</div><strong class="insight-value" id="object">Not enabled</strong><small id="confidence">Optional browser-based detection</small></div></article>
+            <article class="response-card panel"><div class="response-head"><span class="response-mark">✦</span><div><div class="insight-label">IRIS SAYS</div><small>Visual assistant</small></div><button id="speakAgain" class="icon-button subtle" type="button" title="Repeat response" aria-label="Repeat response">↻</button></div><p id="response">Your visual workspace is ready. Start the camera whenever you are.</p></article>
+          </section>
+        </div>
+
+        <section class="activity-section" id="activity">
+          <div class="activity-heading"><div><div class="section-label">YOUR WORKSPACE <span>PRIVATE TO YOUR ACCOUNT</span></div><h3>Recent activity</h3></div><button id="refreshActivity" class="text-button refresh-button" type="button">↻ Refresh</button></div>
+          <div class="activity-list panel" id="activityList"><div class="empty-activity">Your recognized gestures and objects will appear here.</div></div>
+        </section>
+        <footer class="app-footer"><span>IRIS AI <span class="footer-dot">·</span> VISUAL INTELLIGENCE STUDIO</span><span>CAMERA PROCESSING STAYS IN YOUR BROWSER</span></footer>
+      </section>
+    </main>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
